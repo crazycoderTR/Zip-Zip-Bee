@@ -17,6 +17,7 @@ public class ZipZipBee extends ApplicationAdapter {
 	SpriteBatch batch; // cizim icin kullanacagim arac
 	Texture background;
 	Texture bird;
+	Texture bird_got_hit;
 	Texture bee;
 	float
 		bird_X,
@@ -30,15 +31,12 @@ public class ZipZipBee extends ApplicationAdapter {
 	int score = 0, scored_bee; // puanlandirma
 	Random random;
 
-	Circle bird_circle;
-	Circle[][] bee_circle_set;
-
-	ShapeRenderer shapeRenderer;
+	Circle bird_circle; // carpisma icin kullanilan kus icin circle
+	Circle[][] bee_circle_set; // carpisma icin kullanilan ari icin circle
 
 	BitmapFont score_font, game_over_font;
 
-
-	int bee_set = 4;
+	int bee_set = 4; // ari guplari
 	float [] bee_set_X = new float[bee_set];
 	float [][] bee_off_set = new float[bee_set][bee_set - 1];
 	float distance_of_bee_set_X = 0;
@@ -47,18 +45,20 @@ public class ZipZipBee extends ApplicationAdapter {
 	public void create () {
 		// oncreate metodu ile ayni
 		batch = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
+
 		score_font = new BitmapFont();
 		game_over_font = new BitmapFont();
 
 		game_over_font.setColor(Color.BLACK);
 		game_over_font.getData().setScale(6);
+
 		score_font.setColor(Color.WHITE);
 		score_font.getData().setScale(4);
 
 		background = new Texture("background.png");
 		bird = new Texture("bird-1.png");
 		bee = new Texture("bee-1.png");
+		bird_got_hit = new Texture("bird-2.png");
 
 		bird_X = Gdx.graphics.getWidth()/5;
 		bird_Y = Gdx.graphics.getHeight()/2;
@@ -91,12 +91,12 @@ public class ZipZipBee extends ApplicationAdapter {
 		if (game_state == 1) {
 
 			if (bee_set_X[scored_bee] < bird_X) {
-				score += 3;
+				score += 3; // puan arttirma
 
 				if (scored_bee < bee_set - 1) {
-					scored_bee++;
+					scored_bee++; // gecilen ari grubu
 				} else {
-					scored_bee = 0;
+					scored_bee = 0; // grup sifirlama
 				}
 			}
 
@@ -109,11 +109,10 @@ public class ZipZipBee extends ApplicationAdapter {
 			for (int i = 0; i < bee_set; i++) {
 
 				if (bee_set_X[i] < 15) {
-
+					// ari grubu ekranin disina ciktiysa
 					bee_set_X[i] = bee_set_X[i] + bee_set * distance_of_bee_set_X;
 					for (int k = 0; k < bee_set - 1; k++) {
 						bee_off_set[i][k] = ((random.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - 200));
-						System.out.println("ybee " + bee_off_set[i][k]);
 					}
 				} else {
 					bee_set_X[i] = bee_set_X[i] - bee_velocity;
@@ -127,7 +126,7 @@ public class ZipZipBee extends ApplicationAdapter {
 
 			if (bird_Y > 0 && bird_Y <= Gdx.graphics.getHeight() - Gdx.graphics.getHeight()/15) {
 				velocity += gravity;
-				bird_Y = bird_Y - velocity;
+				bird_Y = bird_Y - velocity;// yer cekimi
 			} else {
 				game_state = 2;
 			}
@@ -139,6 +138,9 @@ public class ZipZipBee extends ApplicationAdapter {
 			}
 
 		} else if (game_state == 2) {
+			final float bird_got_hit_Y = bird_Y;
+			batch.draw(bird_got_hit, bird_X, bird_got_hit_Y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/10);
+			bird_Y = Gdx.graphics.getHeight() + 100;
 			game_over_font.draw(batch, "Game Over! Tap To Play Again!", Gdx.graphics.getWidth() / 6, Gdx.graphics.getHeight() / 2);
 
 			if (Gdx.input.justTouched()) {
@@ -168,13 +170,8 @@ public class ZipZipBee extends ApplicationAdapter {
 
 		bird_circle.set(bird_X + Gdx.graphics.getWidth()/24, bird_Y + Gdx.graphics.getHeight()/20, Gdx.graphics.getWidth()/24);
 
-//		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//		shapeRenderer.setColor(Color.BLACK);
-//		shapeRenderer.circle(bird_circle.x, bird_circle.y, bird_circle.radius);
-
 		for (int i = 0; i < bee_set; i++) {
 			for (int k = 0; k < bee_set - 1; k++) {
-//				shapeRenderer.circle(bee_circle_set[i][k].x, bee_circle_set[i][k].y, bee_circle_set[i][k].radius);
 
 				if (Intersector.overlaps(bird_circle, bee_circle_set[i][k])) { // carpisma
 					System.out.println("Collision detection");
@@ -182,7 +179,6 @@ public class ZipZipBee extends ApplicationAdapter {
 				}
 			}
 		}
-//		shapeRenderer.end();
 	}
 	
 	@Override
