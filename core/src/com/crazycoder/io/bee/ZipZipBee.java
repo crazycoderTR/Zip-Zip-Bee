@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
@@ -26,12 +27,15 @@ public class ZipZipBee extends ApplicationAdapter {
 		bee_width,
 		bee_height;
 	int game_state = 0; // oyun basladi/baslamadi/bitti
+	int score = 0, scored_bee; // puanlandirma
 	Random random;
 
 	Circle bird_circle;
 	Circle[][] bee_circle_set;
 
 	ShapeRenderer shapeRenderer;
+
+	BitmapFont score_font, game_over_font;
 
 
 	int bee_set = 4;
@@ -44,6 +48,13 @@ public class ZipZipBee extends ApplicationAdapter {
 		// oncreate metodu ile ayni
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
+		score_font = new BitmapFont();
+		game_over_font = new BitmapFont();
+
+		game_over_font.setColor(Color.BLACK);
+		game_over_font.getData().setScale(6);
+		score_font.setColor(Color.WHITE);
+		score_font.getData().setScale(4);
 
 		background = new Texture("background.png");
 		bird = new Texture("bird-1.png");
@@ -79,6 +90,16 @@ public class ZipZipBee extends ApplicationAdapter {
 
 		if (game_state == 1) {
 
+			if (bee_set_X[scored_bee] < bird_X) {
+				score += 3;
+
+				if (scored_bee < bee_set - 1) {
+					scored_bee++;
+				} else {
+					scored_bee = 0;
+				}
+			}
+
 			if (Gdx.input.justTouched()) {
 				// tiklanma metodu
 
@@ -104,7 +125,7 @@ public class ZipZipBee extends ApplicationAdapter {
 				}
 			}
 
-			if (bird_Y > 0) {
+			if (bird_Y > 0 && bird_Y <= Gdx.graphics.getHeight() - Gdx.graphics.getHeight()/15) {
 				velocity += gravity;
 				bird_Y = bird_Y - velocity;
 			} else {
@@ -118,6 +139,8 @@ public class ZipZipBee extends ApplicationAdapter {
 			}
 
 		} else if (game_state == 2) {
+			game_over_font.draw(batch, "Game Over! Tap To Play Again!", Gdx.graphics.getWidth() / 6, Gdx.graphics.getHeight() / 2);
+
 			if (Gdx.input.justTouched()) {
 				// tiklanma metodu
 				game_state = 1;
@@ -133,10 +156,13 @@ public class ZipZipBee extends ApplicationAdapter {
 				}
 
 				velocity = 0;
+				scored_bee = 0;
+				score = 0;
 			}
 		}
 
 		batch.draw(bird, bird_X, bird_Y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/10);
+		score_font.draw(batch, String.valueOf("Puan: " + score), 100, 100);
 
 		batch.end(); // begin ve end arasina oyunu cizecegiz, neler olacagini
 
