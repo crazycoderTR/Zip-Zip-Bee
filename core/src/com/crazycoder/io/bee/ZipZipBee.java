@@ -141,7 +141,7 @@ public class ZipZipBee extends ApplicationAdapter {
 			final float bird_got_hit_Y = bird_Y;
 			batch.draw(bird_got_hit, bird_X, bird_got_hit_Y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/10);
 			bird_Y = Gdx.graphics.getHeight() + 100;
-			game_over_font.draw(batch, "Game Over! Tap To Play Again!", Gdx.graphics.getWidth() / 6, Gdx.graphics.getHeight() / 2);
+			game_over_font.draw(batch, "Game Over! Tap To Play Again!", Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
 
 			if (Gdx.input.justTouched()) {
 				// tiklanma metodu
