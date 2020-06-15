@@ -9,6 +9,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.Random;
 
@@ -16,6 +23,8 @@ public class ZipZipBee extends ApplicationAdapter {
 
 	SpriteBatch batch; // cizim icin kullanacagim arac
 	Texture background;
+	Image score_button;
+	Texture old_score;
 	Texture bird;
 	Texture bird_got_hit;
 	Texture bee;
@@ -59,6 +68,8 @@ public class ZipZipBee extends ApplicationAdapter {
 		bird = new Texture("bird-1.png");
 		bee = new Texture("bee-1.png");
 		bird_got_hit = new Texture("bird-2.png");
+		old_score = new Texture("score.png");
+		score_button = new Image(old_score);
 
 		bird_X = Gdx.graphics.getWidth()/5;
 		bird_Y = Gdx.graphics.getHeight()/2;
@@ -80,6 +91,18 @@ public class ZipZipBee extends ApplicationAdapter {
 				bee_off_set[i][k] = ((random.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - 200));
 			}
 		}
+
+		score_button.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("score button");
+			}
+
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				System.out.println("score button");
+			}
+		});
 	}
 
 	@Override
@@ -120,7 +143,7 @@ public class ZipZipBee extends ApplicationAdapter {
 
 				for (int k = 0; k < bee_set - 1; k++) {
 					batch.draw(bee, bee_set_X[i], Gdx.graphics.getHeight()/2 + bee_off_set[i][k], bee_width, bee_height);
-					bee_circle_set[i][k] = new Circle(bee_set_X[i] + bee_width/2, Gdx.graphics.getHeight()/2 + bee_off_set[i][k] + bee_height/2, bee_width/2);
+					bee_circle_set[i][k] = new Circle(bee_set_X[i] + bee_width/2, Gdx.graphics.getHeight()/2 + bee_off_set[i][k] + bee_height/2, bee_width/3);
 				}
 			}
 
@@ -132,6 +155,7 @@ public class ZipZipBee extends ApplicationAdapter {
 			}
 
 		} else if (game_state == 0) {
+
 			if (Gdx.input.justTouched()) {
 				// tiklanma metodu
 				game_state = 1;
@@ -141,7 +165,8 @@ public class ZipZipBee extends ApplicationAdapter {
 			final float bird_got_hit_Y = bird_Y;
 			batch.draw(bird_got_hit, bird_X, bird_got_hit_Y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/10);
 			bird_Y = Gdx.graphics.getHeight() + 100;
-			game_over_font.draw(batch, "Game Over! Tap To Play Again!", Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
+			game_over_font.draw(batch, "Kaybettiniz! Tıkla - Oyna!", Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
+
 
 			if (Gdx.input.justTouched()) {
 				// tiklanma metodu
@@ -168,7 +193,7 @@ public class ZipZipBee extends ApplicationAdapter {
 
 		batch.end(); // begin ve end arasina oyunu cizecegiz, neler olacagini
 
-		bird_circle.set(bird_X + Gdx.graphics.getWidth()/24, bird_Y + Gdx.graphics.getHeight()/20, Gdx.graphics.getWidth()/24);
+		bird_circle.set(bird_X + Gdx.graphics.getWidth()/24, bird_Y + Gdx.graphics.getHeight()/20, Gdx.graphics.getWidth()/36);
 
 		for (int i = 0; i < bee_set; i++) {
 			for (int k = 0; k < bee_set - 1; k++) {
