@@ -118,6 +118,7 @@ public class ZipZipBee extends ApplicationAdapter {
 
 				if (scored_bee < bee_set - 1) {
 					scored_bee++; // gecilen ari grubu
+					bee_velocity = bee_velocity + 0.1f; // ari hizlandirma
 				} else {
 					scored_bee = 0; // grup sifirlama
 				}
